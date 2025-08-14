@@ -1,0 +1,5 @@
+pandas
+praw
+python-dotenv
+google-genai
+markdown
