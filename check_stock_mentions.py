@@ -147,10 +147,4 @@ def check_symbol():
 
 
 if __name__ == "__main__":
-    start_time = datetime.now()
-
     check_symbol()
-
-    end_time = datetime.now()
-    duration = end_time - start_time
-    print(f"\nThe script took {duration.total_seconds():.2f} seconds to run.")

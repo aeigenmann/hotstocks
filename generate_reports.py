@@ -40,10 +40,11 @@ genai_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 def find_latest_prefix_group():
-    print("Searching for the latest post files...")
+    print("Searching for the latest posts files...")
     files = sorted(RESULTS_DIR.glob("*-posts.pkl"), key=os.path.getmtime, reverse=True)
     if not files:
-        raise FileNotFoundError("No post files found.")
+        print(f"No hotstocks posts files found in {RESULTS_DIR}")
+        return None, []
     latest_prefix = files[0].name.split("_")[0]  # [yyyymmdd-hhmm]
     latest_files = [f for f in files if f.name.startswith(latest_prefix)]
     print(f"Found latest group with prefix: {latest_prefix}. Processing {len(latest_files)} files.")

@@ -168,7 +168,7 @@ def main():
     latest_prefix = get_latest_file_prefix(HOTSTOCKS_DIR, "*_hotstocks.pkl")
 
     if not latest_prefix:
-        print(f"ERROR: No hotstocks files found in {HOTSTOCKS_DIR}")
+        print(f"No hotstocks files found in {HOTSTOCKS_DIR}")
         return
 
     print(f"Latest prefix found: {latest_prefix}")
@@ -181,18 +181,13 @@ def main():
     print(f"Posts file: {posts_file}")
 
     # Load data files
-    try:
-        print("\nLoading hotstocks data...")
-        hotstocks_data = load_pickle_file(hotstocks_file)
-        print(f"Loaded {len(hotstocks_data)} hotstocks entries")
+    print("\nLoading hotstocks data...")
+    hotstocks_data = load_pickle_file(hotstocks_file)
+    print(f"Loaded {len(hotstocks_data)} hotstocks entries")
 
-        print("Loading posts data...")
-        posts_data = load_pickle_file(posts_file)
-        print(f"Loaded {len(posts_data)} posts")
-
-    except Exception as e:
-        print(f"ERROR: {str(e)}")
-        return
+    print("Loading posts data...")
+    posts_data = load_pickle_file(posts_file)
+    print(f"Loaded {len(posts_data)} posts")
 
     # Extract stock symbols from hotstocks
     print("\nExtracting stock symbols...")

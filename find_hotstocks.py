@@ -99,7 +99,8 @@ def save_csv(data, filepath):
 def main():
     latest_three = get_latest_three_files()
     if len(latest_three) < 3:
-        raise RuntimeError("Not enough files to compare. Need at least 3.")
+        print("Not enough files to compare. Need at least 3.")
+        return
 
     # Sort newest first
     lates_t_ts, latest_fname = latest_three[0]
