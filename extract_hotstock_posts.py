@@ -160,8 +160,6 @@ def main():
     """
     Main function to process hotstocks and posts files.
     """
-    print("Stock Symbol Post Extractor")
-    print("=" * 50)
 
     # Find the latest hotstocks file
     print("Finding latest hotstocks file...")
