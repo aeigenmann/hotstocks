@@ -117,6 +117,7 @@ def generate_report_html(data, analysis_html):
 <head>
 <meta charset="UTF-8">
 <title>Stock Report - {data['symbol']}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body {{ font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }}
 h1, h2 {{ color: #333; }}
@@ -183,6 +184,7 @@ def generate_index():
 <head>
 <meta charset="UTF-8">
 <title>Hot Stocks</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
 h1 { color: #333; }
