@@ -14,7 +14,7 @@ scripts = [
 
 def run_scripts():
     for script in scripts:
-        print(f"=== Running {script} ===")
+        print(f"=== Running {script} ===", flush=True)
         result = subprocess.run([sys.executable, script], stderr=subprocess.PIPE)
         if result.returncode != 0:
             print(f"❌ Error while running {script}:")
