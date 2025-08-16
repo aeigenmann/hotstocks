@@ -32,7 +32,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: results
-          key: results-cache
+          key: results-cache-${{ github.run_id }}
+          restore-keys: |
+            results-cache-
 
       - name: Run all scripts
         env:
