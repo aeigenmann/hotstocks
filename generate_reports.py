@@ -27,7 +27,8 @@ import markdown
 
 
 # === CONFIG ===
-RESULTS_DIR = Path("./results/hotstocks-posts/")
+HOTSTOCKS_DIR = Path("./results/hotstocks/")
+POSTS_DIR = Path("./results/hotstocks-posts/")
 REPORTS_DIR = Path("./results/hotstocks-reports/")
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 INDEX_FILE = REPORTS_DIR / "index.html"
@@ -37,18 +38,40 @@ genai_client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
 # === FUNCTIONS ===
-
-
-def find_latest_prefix_group():
-    print("Searching for the latest posts files...")
-    files = sorted(RESULTS_DIR.glob("*-posts.pkl"), key=os.path.getmtime, reverse=True)
+def get_latest_hotstocks_prefix():
+    files = HOTSTOCKS_DIR.glob("*_hotstocks.pkl")
     if not files:
-        print(f"No hotstocks posts files found in {RESULTS_DIR}")
-        return None, []
-    latest_prefix = files[0].name.split("_")[0]  # [yyyymmdd-hhmm]
-    latest_files = [f for f in files if f.name.startswith(latest_prefix)]
-    print(f"Found latest group with prefix: {latest_prefix}. Processing {len(latest_files)} files.")
-    return latest_prefix, latest_files
+        return None
+
+    # Extract datetime prefixes from filenames
+    prefixes = []
+    for file in files:
+        basename = file.name
+        # Extract the datetime part (assuming format: [yyyymmdd-hhmm]_hotstocks.pkl)
+        if "_" in basename:
+            prefix = basename.split("_")[0]
+            try:
+                # Validate datetime format
+                datetime.strptime(prefix, "%Y%m%d-%H%M")
+                prefixes.append(prefix)
+            except ValueError:
+                continue
+
+    if not prefixes:
+        return None
+
+    # Sort and return the latest
+    prefixes.sort(reverse=True)
+    return prefixes[0]
+
+def find_posts_files(prefix):
+    print("Searching for posts files with prefix {prefix}...")
+    files = sorted(POSTS_DIR.glob("{prefix}_*-posts.pkl"), key=os.path.getmtime, reverse=True)
+    if not files:
+        print(f"No hotstocks posts files found in {POSTS_DIR}")
+        return []
+    print(f"Found posts files. Processing {len(files)} files.")
+    return files
 
 
 def load_post_data(file_path):
@@ -212,7 +235,15 @@ h1 { color: #333; }
 
 
 def main():
-    latest_prefix, files = find_latest_prefix_group()
+    print("Finding latest hotstocks file...")
+    latest_prefix = get_latest_hotstocks_prefix()
+    if not latest_prefix:
+        print(f"No hotstocks files found in {HOTSTOCKS_DIR}")
+        return
+    print(f"Latest prefix found: {latest_prefix}")
+
+    files = find_posts_files(latest_prefix)
+
     for file in files:
         data = load_post_data(file)
 
