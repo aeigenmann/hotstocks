@@ -91,7 +91,7 @@ def main():
     # Delete all files in stock-list
     delete_all_files(results_dir / "stock-list")
 
-    # Keep newest 30 files in other folders
+    # Keep only files from the last 30 days in other folders
     for folder_name in [
         "hotstocks",
         "hotstocks-posts",
