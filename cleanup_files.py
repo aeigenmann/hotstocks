@@ -8,7 +8,7 @@ This script performs two main operations:
 """
 
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 
@@ -40,45 +40,42 @@ def delete_all_files(folder_path):
     print(f"Deleted {len(files)} files from {folder_path.name}")
 
 
-def keep_newest_files(folder_path, max_files=30):
-    """Keep only the newest files based on timestamp prefix"""
+def keep_newest_files(folder_path, max_days=30):
+    """Keep only files from the last N days based on timestamp prefix."""
     if not folder_path.exists():
         print(f"Folder does not exist: {folder_path}")
         return
 
     files = [f for f in folder_path.iterdir() if f.is_file()]
+    cutoff_date = datetime.now() - timedelta(days=max_days)
 
-    # Separate files with and without a valid timestamp
-    files_with_time = []
-    files_without_time = []
+    files_to_delete = []
+    kept_files_with_timestamp = 0
+    files_without_timestamp = 0
 
     for file in files:
         timestamp = parse_timestamp(file.name)
         if timestamp:
-            files_with_time.append((timestamp, file))
+            if timestamp < cutoff_date:
+                files_to_delete.append(file)
+            else:
+                kept_files_with_timestamp += 1
         else:
-            files_without_time.append(file)
+            files_without_timestamp += 1
 
-    if len(files_with_time) <= max_files:
+    if not files_to_delete:
         print(
-            f"{folder_path.name}: {len(files_with_time)} files with timestamp, no cleanup needed. {len(files_without_time)} files without timestamp were kept."
+            f"{folder_path.name}: No files older than {max_days} days found. Kept {kept_files_with_timestamp} timestamped files and {files_without_timestamp} other files."
         )
         return
 
-    # Sort files with a timestamp (newest first)
-    files_with_time.sort(key=lambda x: x[0], reverse=True)
-
-    # Keep the newest files with a timestamp
-    files_to_keep = files_with_time[:max_files]
-    files_to_delete = files_with_time[max_files:]
-
-    # Delete the excess timestamped files
-    for _, file in files_to_delete:
+    # Delete the old files
+    for file in files_to_delete:
         file.unlink()
         print(f"Deleted: {file.name}")
 
     print(
-        f"{folder_path.name}: kept {len(files_to_keep)} files with timestamp, deleted {len(files_to_delete)} files. {len(files_without_time)} files without timestamp were kept."
+        f"{folder_path.name}: Kept {kept_files_with_timestamp} files from the last {max_days} days, deleted {len(files_to_delete)} old files. {files_without_timestamp} files without timestamp were kept."
     )
 
 
@@ -95,7 +92,13 @@ def main():
     delete_all_files(results_dir / "stock-list")
 
     # Keep newest 30 files in other folders
-    for folder_name in ["hotstocks", "hotstocks-posts", "mentions", "posts", "hotstocks-reports"]:
+    for folder_name in [
+        "hotstocks",
+        "hotstocks-posts",
+        "mentions",
+        "posts",
+        "hotstocks-reports",
+    ]:
         keep_newest_files(results_dir / folder_name)
 
     print("Cleanup completed!")
