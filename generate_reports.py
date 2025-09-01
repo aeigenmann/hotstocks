@@ -64,9 +64,10 @@ def get_latest_hotstocks_prefix():
     prefixes.sort(reverse=True)
     return prefixes[0]
 
+
 def find_posts_files(prefix):
-    print("Searching for posts files with prefix {prefix}...")
-    files = sorted(POSTS_DIR.glob("{prefix}_*-posts.pkl"), key=os.path.getmtime, reverse=True)
+    print(f"Searching for posts files with prefix {prefix}...")
+    files = sorted(POSTS_DIR.glob(f"{prefix}_*-posts.pkl"), key=os.path.getmtime, reverse=True)
     if not files:
         print(f"No hotstocks posts files found in {POSTS_DIR}")
         return []
