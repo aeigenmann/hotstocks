@@ -86,9 +86,9 @@ def markdown_to_html(text):
     return markdown.markdown(text)
 
 
-def analyze_with_gemini(stock_symbol, posts):
-    print(f"Sending prompt to Gemini for analysis of {stock_symbol}...")
-    prompt = f"""Bitte analysiere die Post-Inhalte und Kommentare darauf, ob die User dem Unternehmen {stock_symbol} bullish oder bearish gegenüberstehen.
+def analyze_with_gemini(data, posts_text):
+    print(f"Sending prompt to Gemini for analysis of {data['symbol']}...")
+    prompt = f"""Bitte analysiere die Post-Inhalte und Kommentare darauf, ob die User dem Unternehmen {data['symbol']} ({data['company']}) bullish oder bearish gegenüberstehen.
 Zitiere aus bis zu drei Kommentaren mit vielen Upvotes, die deine Analyse stützen.
 Bitte strukturiere deine Antwort wie folgt:
 **Gesamteinschätzung**: Bullish/Bearish/Neutral
@@ -97,10 +97,10 @@ Bitte strukturiere deine Antwort wie folgt:
 **Stimmungswert**: Bewertung von -10 (sehr bearish) bis +10 (sehr bullish).
 
 Posts:
-{posts}
+{posts_text}
 """
     response = genai_client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
-    print(f"Analysis for {stock_symbol} received.")
+    print(f"Analysis for {data['symbol']} received.")
     return markdown_to_html(response.text)
 
 
@@ -265,7 +265,7 @@ def main():
                     )
             posts_text += "\n\n"  # Separate each post clearly
 
-        analysis_html = analyze_with_gemini(data["symbol"], posts_text)
+        analysis_html = analyze_with_gemini(data, posts_text)
         html_report = generate_report_html(data, analysis_html)
         save_report(latest_prefix, data["symbol"], html_report)
 
