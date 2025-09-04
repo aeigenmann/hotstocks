@@ -160,7 +160,7 @@ def scan_wsb_mentions():
 
         # Search comments
         try:
-            post.comments.replace_more(limit=0)  # No "Load more" links
+            post.comments.replace_more(limit=10)  # Limit number of "MoreComments" objects
             for comment in post.comments.list():
                 comment_findings = find_symbols_in_text(comment.body, pattern)
                 # Determine hierarchy information
