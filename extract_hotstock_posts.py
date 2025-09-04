@@ -145,7 +145,7 @@ def find_matching_posts(posts_data: List[Dict], target_symbols: Dict[str, Dict])
                     parent_id = comment["parent_id"]
                     if symbol in comment_symbols or any(c["id"] == parent_id for c in post_copy["comments"]):
                         post_copy["comments"].append(comment)
-                if len(post_copy["comments"]) >= 3:
+                if len(post_copy["comments"]) > 5:
                     matching_posts[symbol].append(post_copy)
 
     return matching_posts
