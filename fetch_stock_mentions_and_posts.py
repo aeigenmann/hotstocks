@@ -86,7 +86,8 @@ def get_comment_hierarchy(comment):
                 depth += 1
             except:
                 break
-        return comment.parent_id, depth
+        parent_id = comment.parent_id.split("_")[1]  # Remove "t1_" or "t3_" prefix
+        return parent_id, depth
 
 
 def save_posts_data(posts_data, run_id):
@@ -160,16 +161,17 @@ def scan_wsb_mentions():
 
         # Search comments
         try:
-            post.comments.replace_more(limit=10)  # Limit number of "MoreComments" objects
+            total_comment_findings = defaultdict(int)
+            post.comments.replace_more(limit=32)  # Limit number of "MoreComments" objects
             for comment in post.comments.list():
                 comment_findings = find_symbols_in_text(comment.body, pattern)
                 # Determine hierarchy information
                 parent_id, depth = get_comment_hierarchy(comment)
 
                 if comment_findings:
-                    print(f"  ✓ Found in comments: {dict(comment_findings)}")
                     for symbol, count in comment_findings.items():
                         total_counts[symbol] += count
+                        total_comment_findings[symbol] += count
 
                 # Save comments with ≥3 upvotes and stock relevance
                 if comment.score >= 3 and (
@@ -204,6 +206,9 @@ def scan_wsb_mentions():
                         }
 
                     post_data["comments"].append(comment_data)
+
+            if total_comment_findings:
+                print(f"  ✓ Found in comments: {dict(total_comment_findings)}")
 
         except Exception as e:
             print(f"  ⚠️ Error with comments: {e}")
