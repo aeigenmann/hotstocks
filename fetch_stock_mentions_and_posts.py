@@ -182,9 +182,7 @@ def scan_wsb_mentions():
                         "parent_id": parent_id,  # None for top-level, else parent comment ID
                         "hierarchy_depth": depth,  # 0 for top-level, >0 for replies
                         "is_reply": not comment.is_root,  # Bool: Is reply to another comment?
-                        "found_symbols": (
-                            dict(comment_findings) if comment_findings else {}
-                        ),
+                        "found_symbols": (dict(comment_findings) if comment_findings else {}),
                     }
 
                     # Add comment to post data (create post data if not yet existing)
@@ -197,9 +195,7 @@ def scan_wsb_mentions():
                             "upvotes": post.score,
                             "created_utc": post.created_utc,
                             "url": post.url,
-                            "found_symbols": (
-                                dict(post_findings) if post_findings else {}
-                            ),
+                            "found_symbols": (dict(post_findings) if post_findings else {}),
                             "comments": [],
                         }
 
@@ -209,9 +205,7 @@ def scan_wsb_mentions():
             print(f"  ⚠️ Error with comments: {e}")
 
         # Add post data to overall list (only if post or comments are relevant)
-        if post_data is not None and (
-            post_data["found_symbols"] or post_data["comments"]
-        ):
+        if post_data is not None and (post_data["found_symbols"] or post_data["comments"]):
             posts_data.append(post_data)
 
     # Save posts data (independent of symbol frequency)
@@ -221,9 +215,7 @@ def scan_wsb_mentions():
         # Statistics about saved posts data
         total_posts = len(posts_data)
         total_comments = sum(len(post["comments"]) for post in posts_data)
-        print(
-            f"📊 Saved posts data: {total_posts} posts, {total_comments} comments (≥3 upvotes)"
-        )
+        print(f"📊 Saved posts data: {total_posts} posts, {total_comments} comments (≥3 upvotes)")
 
     # Filter results (>5 mentions)
     filtered_results = [
@@ -258,9 +250,7 @@ def scan_wsb_mentions():
         # Show top results
         print("\n🏆 Top symbols:")
         for entry in sorted_results[:10]:
-            print(
-                f"  {entry['symbol']} ({entry['company']}): {entry['count']} mentions"
-            )
+            print(f"  {entry['symbol']} ({entry['company']}): {entry['count']} mentions")
     else:
         print("❌ No symbols with more than 5 mentions found")
 
