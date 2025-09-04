@@ -180,7 +180,7 @@ def main():
     latest_prefix = get_latest_file_prefix(HOTSTOCKS_DIR, "*_hotstocks.pkl")
 
     if not latest_prefix:
-        print(f"No hotstocks files found in {HOTSTOCKS_DIR}")
+        print(f"No hotstocks file found in {HOTSTOCKS_DIR}")
         return
 
     print(f"Latest prefix found: {latest_prefix}")
