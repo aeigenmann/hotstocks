@@ -197,12 +197,12 @@ def main():
     matching_posts = find_matching_posts(posts_data, target_symbols)
 
     # Save individual files for each symbol with matches
-    print("\nSaving matching posts...")
+    print("Saving matching posts...")
     total_saved = 0
 
     for symbol, posts in matching_posts.items():
+        print(f"\nProcessing symbol: {symbol}")
         if posts:  # Only save if there are matching posts
-            print(f"\nProcessing symbol: {symbol}")
             print(f"Found {len(posts)} matching posts")
 
             # Create output data with all posts for this symbol
@@ -218,7 +218,6 @@ def main():
         else:
             print(f"No matching posts found for symbol: {symbol}")
 
-    print(f"\n" + "=" * 50)
     print(f"Processing complete!")
     print(f"Total files saved: {total_saved}")
     print(f"Output directory: {HOTSTOCKS_POSTS_DIR}")
