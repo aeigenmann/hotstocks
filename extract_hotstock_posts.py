@@ -114,7 +114,7 @@ def extract_stock_symbols(hotstocks_data: List[Dict]) -> Dict[str, Dict]:
 
 def find_matching_posts(posts_data: List[Dict], target_symbols: Dict[str, Dict]) -> Dict[str, List[Dict]]:
     """
-    Find posts that contain any of the target stock symbols in their found_symbols.
+    Find posts that contain any of the target stock symbols.
 
     Args:
         posts_data: List of post dictionaries
@@ -126,13 +126,27 @@ def find_matching_posts(posts_data: List[Dict], target_symbols: Dict[str, Dict])
     matching_posts = {symbol: [] for symbol in target_symbols.keys()}
 
     for post in posts_data:
-        if post.get("type") == "post" and "found_symbols" in post:
-            post_symbols = post["found_symbols"].keys() if post["found_symbols"] else []
-
-            # Check if any target symbol is found in this post
+        # Check if any target symbol is found in this post
+        if post["found_symbols"]:
+            post_symbols = post["found_symbols"].keys()
             for symbol in target_symbols.keys():
                 if symbol in post_symbols:
                     matching_posts[symbol].append(post)
+        # For collection posts without symbols, check whether the target symbol is found in the comments
+        # Only include comments that mention the symbol or are replies to comments that do
+        # Include the post if at least 3 comments match
+        elif post["comments"]:
+            comments = post["comments"]
+            for symbol in target_symbols.keys():
+                post_copy = post.copy()
+                post_copy["comments"] = []  # Reset comments to only include matching ones
+                for comment in comments:
+                    comment_symbols = comment["found_symbols"].keys() if comment["found_symbols"] else []
+                    parent_id = comment["parent_id"]
+                    if symbol in comment_symbols or any(c["id"] == parent_id for c in post_copy["comments"]):
+                        post_copy["comments"].append(comment)
+                if len(post_copy["comments"]) >= 3:
+                    matching_posts[symbol].append(post_copy)
 
     return matching_posts
 
