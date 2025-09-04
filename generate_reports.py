@@ -66,7 +66,7 @@ def get_latest_hotstocks_prefix():
 
 
 def find_posts_files(prefix):
-    print(f"Searching for posts files with prefix {prefix}...")
+    print(f"\nSearching for posts files with prefix {prefix}...")
     files = sorted(POSTS_DIR.glob(f"{prefix}_*-posts.pkl"), key=os.path.getmtime, reverse=True)
     if not files:
         print(f"No hotstocks posts files found in {POSTS_DIR}")
@@ -76,7 +76,7 @@ def find_posts_files(prefix):
 
 
 def load_post_data(file_path):
-    print(f"Loading data from {file_path}...")
+    print(f"\nLoading data from {file_path}...")
     with open(file_path, "rb") as f:
         return pickle.load(f)
 
