@@ -262,6 +262,8 @@ def main():
                     posts_text += (
                         f"  - Comment Body: {comment.get('body','')}\n"
                         f"  - Comment Upvotes: {comment.get('upvotes',0)}\n"
+                        f"  - Comment ID: {comment.get('id','')}\n"
+                        f"  - Comment Parent ID: {comment.get('parent_id','')}\n"
                     )
             posts_text += "\n\n"  # Separate each post clearly
 
