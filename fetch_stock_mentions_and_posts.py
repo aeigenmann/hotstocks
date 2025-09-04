@@ -138,15 +138,14 @@ def scan_wsb_mentions():
         combined_text = f"{post.title} {post.selftext}"
         post_findings = find_symbols_in_text(combined_text, pattern)
 
-        if post_findings:
-            print(f"  ✓ Found: {dict(post_findings)}")
-            for symbol, count in post_findings.items():
-                total_counts[symbol] += count
-
         # Collect post data for later storage
         # Save post data when stock symbols are found
         post_data = None
         if post_findings:
+            print(f"  ✓ Found in post: {dict(post_findings)}")
+            for symbol, count in post_findings.items():
+                total_counts[symbol] += count
+
             post_data = {
                 "type": "post",
                 "id": post.id,
@@ -164,12 +163,14 @@ def scan_wsb_mentions():
             post.comments.replace_more(limit=0)  # No "Load more" links
             for comment in post.comments.list():
                 comment_findings = find_symbols_in_text(comment.body, pattern)
+
                 if comment_findings:
+                    print(f"  ✓ Found in comments: {dict(comment_findings)}")
                     for symbol, count in comment_findings.items():
                         total_counts[symbol] += count
 
-                # Save comments with ≥3 upvotes
-                if comment.score >= 3:
+                # Save comments with ≥3 upvotes and stock relevance
+                if comment.score >= 3 and (post_data is not None or comment_findings):
                     # Determine hierarchy information
                     parent_id, depth = get_comment_hierarchy(comment)
 
