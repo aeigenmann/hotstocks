@@ -89,10 +89,10 @@ def markdown_to_html(text):
 def analyze_with_gemini(data, posts_text):
     print(f"Sending prompt to Gemini for analysis of {data['symbol']}...")
     prompt = f"""Du bist ein Börsenexperte. Bitte analysiere die Post-Inhalte und Kommentare darauf, ob die User dem Unternehmen {data['symbol']} ({data['company']}) bullish oder bearish gegenüberstehen.
-Formatiere die komplette Antwort in Markdown mit den folgenden Abschnitten:
+Formatiere die Antwort in Markdown mit den folgenden Abschnitten:
 **Gesamteinschätzung**: Bullish/Bearish/Neutral
-**Begründung**: Warum diese Einschätzung? Zitiere hier idealerweise bis zu drei Kommentare mit vielen Upvotes, die deine Einschätzung unterstützen.
-**Wichtige Punkte**: Die 3 wichtigsten Argumente
+**Begründung**: Warum diese Einschätzung? Liste hier idealerweise bis zu drei Kommentare mit vielen Upvotes auf, die deine Einschätzung unterstützen.
+**Wichtige Punkte**: Liste hier die 3 wichtigsten Argumente auf.
 **Stimmungswert**: Bewertung von -10 (sehr bearish) bis +10 (sehr bullish)
 
 Posts:
