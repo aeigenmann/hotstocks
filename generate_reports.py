@@ -24,6 +24,7 @@ from dotenv import load_dotenv
 from google import genai
 from html import escape
 import markdown
+import time
 
 
 # === CONFIG ===
@@ -98,9 +99,23 @@ Formatiere die Antwort in Markdown mit den folgenden Abschnitten:
 Posts:
 {posts_text}
 """
-    response = genai_client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+    max_retries = 3
+    delay = 5  # initial delay in seconds
+    response = None
+    for i in range(max_retries):
+        try:
+            response = genai_client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
+            break
+        except Exception as e:
+            if i < max_retries - 1:
+                print(f"Error communicating with Gemini: {e}")
+                print(f"Retrying in {delay} seconds...")
+                time.sleep(delay)
+                delay *= 2
+            else:
+                raise
     print(f"Analysis for {data['symbol']} received.")
-    return markdown_to_html(response.text)
+    return markdown_to_html(response.text)  # type: ignore
 
 
 def sentiment_color(value):
