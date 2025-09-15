@@ -132,32 +132,31 @@ def scan_wsb_mentions():
         post_time = datetime.fromtimestamp(post.created_utc)
         if post_time < cutoff_time:
             continue
+        if post.score < 10:
+            continue  # Skip low-upvote posts
 
         print(f"📄 Post: {post.title[:50]}...")
 
         # Search post title and text
         combined_text = f"{post.title} {post.selftext}"
         post_findings = find_symbols_in_text(combined_text, pattern)
-
-        # Collect post data for later storage
-        # Save post data when stock symbols are found
-        post_data = None
         if post_findings:
             print(f"  ✓ Found in post: {dict(post_findings)}")
             for symbol, count in post_findings.items():
                 total_counts[symbol] += count
 
-            post_data = {
-                "type": "post",
-                "id": post.id,
-                "title": post.title,  # Complete post title
-                "content": post.selftext,  # Complete post content
-                "upvotes": post.score,
-                "created_utc": post.created_utc,
-                "url": f"https://www.reddit.com{post.permalink}",
-                "found_symbols": dict(post_findings),
-                "comments": [],  # List for qualified comments
-            }
+        # Collect post data for later storage
+        post_data = {
+            "type": "post",
+            "id": post.id,
+            "title": post.title,  # Complete post title
+            "content": post.selftext,  # Complete post content
+            "upvotes": post.score,
+            "created_utc": post.created_utc,
+            "url": f"https://www.reddit.com{post.permalink}",
+            "found_symbols": dict(post_findings),
+            "comments": [],  # List for qualified comments
+        }
 
         # Search comments
         try:
@@ -175,9 +174,9 @@ def scan_wsb_mentions():
 
                 # Save comments with ≥3 upvotes and stock relevance
                 if comment.score >= 3 and (
-                    (post_data and post_data["found_symbols"])
+                    post_data["found_symbols"]
                     or comment_findings
-                    or (post_data and any(c["id"] == parent_id for c in post_data["comments"]))
+                    or any(c["id"] == parent_id for c in post_data["comments"])
                 ):
                     comment_data = {
                         "type": "comment",
@@ -190,21 +189,6 @@ def scan_wsb_mentions():
                         "is_reply": not comment.is_root,  # Bool: Is reply to another comment?
                         "found_symbols": (dict(comment_findings) if comment_findings else {}),
                     }
-
-                    # Add comment to post data (create post data if not yet existing)
-                    if post_data is None:
-                        post_data = {
-                            "type": "post",
-                            "id": post.id,
-                            "title": post.title,
-                            "content": post.selftext,
-                            "upvotes": post.score,
-                            "created_utc": post.created_utc,
-                            "url": post.url,
-                            "found_symbols": (dict(post_findings) if post_findings else {}),
-                            "comments": [],
-                        }
-
                     post_data["comments"].append(comment_data)
 
             if total_comment_findings:
@@ -214,7 +198,7 @@ def scan_wsb_mentions():
             print(f"  ⚠️ Error with comments: {e}")
 
         # Add post data to overall list (only if post or comments are relevant)
-        if post_data is not None and (post_data["found_symbols"] or post_data["comments"]):
+        if post_data["found_symbols"] or post_data["comments"]:
             posts_data.append(post_data)
 
     # Save posts data (independent of symbol frequency)
