@@ -131,9 +131,8 @@ def extract_sentiment_value(text):
     return int(match.group(1)) if match else 0
 
 
-def generate_report_html(data, analysis_html):
+def generate_report_html(data, analysis_html, sentiment_value):
     print(f"Generating report for {data['symbol']}...")
-    sentiment_value = extract_sentiment_value(analysis_html)
     sentiment_col = sentiment_color(sentiment_value)
 
     # Sort posts by upvotes desc
@@ -282,8 +281,11 @@ def main():
             posts_text += "\n\n"  # Separate each post clearly
 
         analysis_html = analyze_with_gemini(data, posts_text)
-        html_report = generate_report_html(data, analysis_html)
-        save_report(latest_prefix, data["symbol"], html_report)
+        sentiment_value = extract_sentiment_value(analysis_html)
+
+        if sentiment_value >= 8 or sentiment_value <= -8:
+            html_report = generate_report_html(data, analysis_html, sentiment_value)
+            save_report(latest_prefix, data["symbol"], html_report)
 
     generate_index()
     print("\nAll reports generated successfully!")
