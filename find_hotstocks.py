@@ -69,10 +69,7 @@ def compare_files(latest_data, prev_data, prev2_data):
         avg_prev = (prev_val + prev2_val) / 2
         cond2 = latest_val > avg_prev
 
-        # Condition 3: new symbol in latest file
-        cond3 = prev_val == 0 and prev2_val == 0 and latest_val > 0
-
-        if cond1 or cond2 or cond3:
+        if cond1 or cond2:
             hotstocks.append(
                 {"symbol": symbol, "company": company_name, "latest": latest_val, "prev": prev_val, "prev2": prev2_val}
             )
