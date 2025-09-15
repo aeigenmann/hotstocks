@@ -126,8 +126,8 @@ def find_matching_posts(posts_data: List[Dict], target_symbols: Dict[str, Dict])
     matching_posts = {symbol: [] for symbol in target_symbols.keys()}
 
     for post in posts_data:
-        # Check if any target symbol is found in this post
-        if post["found_symbols"]:
+        # Check if any target symbol is found in this post and it has at least 3 comments
+        if post["found_symbols"] and len(post["comments"]) >= 3:
             post_symbols = post["found_symbols"].keys()
             for symbol in target_symbols.keys():
                 if symbol in post_symbols:
@@ -145,7 +145,7 @@ def find_matching_posts(posts_data: List[Dict], target_symbols: Dict[str, Dict])
                     parent_id = comment["parent_id"]
                     if symbol in comment_symbols or any(c["id"] == parent_id for c in post_copy["comments"]):
                         post_copy["comments"].append(comment)
-                if len(post_copy["comments"]) > 5:
+                if len(post_copy["comments"]) >= 3:
                     matching_posts[symbol].append(post_copy)
 
     return matching_posts
