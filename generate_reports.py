@@ -99,7 +99,7 @@ Formatiere die Antwort in Markdown mit den folgenden Abschnitten:
 Posts:
 {posts_text}
 """
-    max_retries = 3
+    max_retries = 5
     delay = 5  # initial delay in seconds
     response = None
     for i in range(max_retries):
