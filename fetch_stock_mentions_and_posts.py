@@ -132,7 +132,7 @@ def scan_wsb_mentions():
         post_time = datetime.fromtimestamp(post.created_utc)
         if post_time < cutoff_time:
             continue
-        if post.score < 10:
+        if post.score < 3:
             continue  # Skip low-upvote posts
 
         print(f"📄 Post: {post.title[:50]}...")
@@ -210,7 +210,7 @@ def scan_wsb_mentions():
         total_comments = sum(len(post["comments"]) for post in posts_data)
         print(f"📊 Saved posts data: {total_posts} posts, {total_comments} comments (≥3 upvotes)")
 
-    # Filter results (>5 mentions)
+    # Filter results (>=10 mentions)
     filtered_results = [
         {
             "symbol": symbol,
@@ -218,7 +218,7 @@ def scan_wsb_mentions():
             "count": count,
         }
         for symbol, count in total_counts.items()
-        if count > 5
+        if count >= 10
     ]
 
     # Sort results by count descending
@@ -238,14 +238,14 @@ def scan_wsb_mentions():
         writer.writerows(sorted_results)
 
     if sorted_results:
-        print(f"📊 Found symbols (>5 mentions): {len(sorted_results)}")
+        print(f"📊 Found symbols (>=10 mentions): {len(sorted_results)}")
 
         # Show top results
         print("\n🏆 Top symbols:")
         for entry in sorted_results[:10]:
             print(f"  {entry['symbol']} ({entry['company']}): {entry['count']} mentions")
     else:
-        print("❌ No symbols with more than 5 mentions found")
+        print("❌ No symbols with >=10 mentions found.")
 
 
 if __name__ == "__main__":
