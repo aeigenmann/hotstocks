@@ -163,17 +163,19 @@ def scan_wsb_mentions():
             total_comment_findings = defaultdict(int)
             post.comments.replace_more(limit=32)  # Limit number of "MoreComments" objects
             for comment in post.comments.list():
+                if comment.score < 3:
+                    continue  # Skip low-upvote comments
+
                 comment_findings = find_symbols_in_text(comment.body, pattern)
                 # Determine hierarchy information
                 parent_id, depth = get_comment_hierarchy(comment)
-
                 if comment_findings:
                     for symbol, count in comment_findings.items():
                         total_counts[symbol] += count
                         total_comment_findings[symbol] += count
 
-                # Save comments with ≥3 upvotes and stock relevance
-                if comment.score >= 3 and (
+                # Save comments with stock relevance
+                if (
                     post_data["found_symbols"]
                     or comment_findings
                     or any(c["id"] == parent_id for c in post_data["comments"])
