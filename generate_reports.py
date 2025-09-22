@@ -173,6 +173,8 @@ th {{ background: #eee; }}
 </style>
 </head>
 <body>
+<a href='index.html'><< Hot Stocks</a>
+
 <h1>Stock Report - {data['symbol']} ({data['company']})</h1>
 
 <div class="card">
